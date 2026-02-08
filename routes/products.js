@@ -42,14 +42,32 @@ router.post("/:id/reviews", async (req, res) => {
   const productId = Number(req.params.id);
   const { user, rating, comment } = req.body;
 
-  if (!user || !rating || !comment) {
+  if (!user || comment.trim() === "" || rating == null) {
     return res.status(400).json({ error: "Invalid input" });
   }
 
+  if (rating < 1 || rating > 5) {
+    return res.status(400).json({ error: "Rating must be 1–5" });
+  }
+
+  let id = 0
+
+  reviews = await Review.find({productId: productId}).sort({ createdAt: -1 });
+
+  if (reviews.length != 0){
+    reviews.forEach((R) => {
+      if (R.id > id) {
+        id = R.id; 
+      }
+    }) 
+  }
+  
+
   const review = await Review.create({
+    id,
     productId,
     user,
-    rating,
+    rating: Number(rating),
     comment,
   });
 
@@ -57,5 +75,6 @@ router.post("/:id/reviews", async (req, res) => {
 
   res.status(201).json(review);
 });
+
 
 module.exports = router;
