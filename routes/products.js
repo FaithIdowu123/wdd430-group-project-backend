@@ -17,6 +17,7 @@ router.get("/", async (req, res) => {
  * Used by ProductDetailPage
  */
 router.get("/:id", async (req, res) => {
+  recalc(Number(req.params.id));
   const product = await Product.findOne({ id: Number(req.params.id) });
   if (!product) return res.status(404).json(null);
   res.json(product);
