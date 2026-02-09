@@ -50,21 +50,7 @@ router.post("/:id/reviews", async (req, res) => {
     return res.status(400).json({ error: "Rating must be 1–5" });
   }
 
-  let id = 0
-
-  reviews = await Review.find({productId: productId}).sort({ createdAt: -1 });
-
-  if (reviews.length != 0){
-    reviews.forEach((R) => {
-      if (R.id > id) {
-        id = R.id; 
-      }
-    }) 
-  }
-  
-
   const review = await Review.create({
-    id,
     productId,
     user,
     rating: Number(rating),
